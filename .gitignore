@@ -1,0 +1,49 @@
+# Ignore Visual Studio folder
+.vs/
+
+# Ignore build output
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Ignore IDE settings
+*.rsuser
+*.sln.docstates
+
+# Ignore NuGet packages
+*.nupkg
+packages/
+
+# Ignore logs
+*.log
+
+# Ignore appsettings.json in specific projects
+UserService/appsettings.json
+SemanticSearchService/appsettings.json
+
+# Ignore all appsettings.Development.json files
+# **/appsettings.Development.json
+
+# Ignore launchSettings.json
+# **/Properties/launchSettings.json
+
+# Ignore secrets and environment files
+*.env
+.env.*
+
+# Ignore Rider/JetBrains IDE files
+.idea/
+
+# Ignore coverage reports
+coverage/
+*.coverage
+*.coveragexml
+
+# Ignore temporary files
+*.tmp
+*.bak
