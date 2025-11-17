@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NLog;
+using System.Security.Cryptography;
 using UserService.Data.Models;
 using UserService.DTOs;
 using UserService.Middlewares;
@@ -20,6 +22,27 @@ namespace UserService.Services
             _mapper = mapper;
             _logger = logger;
         }
+
+
+        public async Task<string> GeneratePasswordResetTokenAsync(Guid userId)
+        {
+            var user = await _repository.GetByIdAsync(userId);
+            //var user = await _context.AppUsers.FindAsync(userId);
+            if (user == null)
+                throw new ArgumentException("User not found.");
+
+            // Generate a secure random token
+            var tokenBytes = RandomNumberGenerator.GetBytes(32);
+            var token = Convert.ToBase64String(tokenBytes);
+
+            ////Optionally store token in DB for validation later
+            //user.PasswordResetToken = token;
+            //user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
+            //await _context.SaveChangesAsync();
+
+            return token;
+        }
+
 
         public async Task<ApiResponse<IEnumerable<User?>>> GetAllUsersAsync()
         {

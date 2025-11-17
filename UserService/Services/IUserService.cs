@@ -5,7 +5,7 @@ namespace UserService.Services
 {
     public interface IUserService
     {
-
+        Task<string> GeneratePasswordResetTokenAsync(Guid userId);
         Task<ApiResponse<IEnumerable<User?>>> GetAllUsersAsync();
         Task<ApiResponse<User?>> GetUserByIdAsync(Guid id);
         Task<ApiResponse<User>> CreateUserAsync(UserDto dto);

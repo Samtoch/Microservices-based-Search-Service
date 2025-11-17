@@ -1,8 +1,15 @@
 # Microservices-based-Search-Service
 This is a .Net 9 Microservices Project with implemetations for User Management, Email Service and Semantic Search Service. With YARP as the API Gateway
 
+API Gateway 
+http://localhost:5083/swagger/index.html
 
-CREATE TABLE [dbo].[Users] (
+{
+  "username": "admin",
+  "password": "password"
+}
+
+CREATE TABLE [dbo].[AppUsers] (
     [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
     [UserName] NVARCHAR(100) NOT NULL,
     [Password] NVARCHAR(255) NOT NULL,
@@ -18,7 +25,7 @@ CREATE TABLE [dbo].[Users] (
     [IsDeleted] BIT NOT NULL DEFAULT 0
 );
 
-INSERT INTO [dbo].[Users] (
+INSERT INTO [dbo].[AppUsers] (
     [Id], [UserName], [Password], [Email], [Phone], [Role],
     [FirstName], [LastName], [ModifiedDate], [CreatedDate],
     [IsActive], [DateOfBirth], [IsDeleted]
@@ -33,4 +40,4 @@ VALUES
 (NEWID(), 'alex_brown', 'MyPass789!', 'alex.brown@example.com', '07812345678', 'Manager',
  'Alex', 'Brown', NULL, GETDATE(), 1, '1988-03-10', 0);
 
- SELECT * FROM USERS;
+SELECT * FROM APPUSERS;

@@ -2,6 +2,7 @@
 using ApiGateway.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MMLib.SwaggerForOcelot;
@@ -23,15 +24,36 @@ namespace ApiGateway
             // Add YARP Reverse Proxy
             builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+            builder.Services.AddResponseCaching();
+
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("fixed", limiterOptions =>
+                {
+                    limiterOptions.PermitLimit = 2; // 2 requests
+                    limiterOptions.Window = TimeSpan.FromSeconds(10);
+                    limiterOptions.QueueLimit = 0;
+                });
+            });
+
+
             builder.Services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("your-secret-key")),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("A_Very_Long_And_Secure_Key_Example_12345")),
                         ValidateIssuer = false,
                         ValidateAudience = false
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
@@ -138,9 +160,9 @@ namespace ApiGateway
                         {
                             Subject = new ClaimsIdentity(new[]
                             {
-                    new Claim(ClaimTypes.Name, login.Username),
-                    new Claim(ClaimTypes.Role, "Admin")
-                }),
+                                new Claim(ClaimTypes.Name, login.Username),
+                                new Claim(ClaimTypes.Role, "Admin")
+                            }),
                             Expires = DateTime.UtcNow.AddHours(1),
                             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                         };
@@ -152,13 +174,15 @@ namespace ApiGateway
                 .WithName("Login")
                 .WithOpenApi();
 
-            app.MapGet("/secure", [Authorize] () => "This is a secure endpoint")
-               .WithName("SecureEndpoint")
-               .WithOpenApi();
-
+            app.UseRateLimiter();
+            app.UseResponseCaching();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapGet("/secure", [Authorize] () => "This is a secure endpoint")
+               .WithName("SecureEndpoint")
+               .WithOpenApi();
 
             // Require JWT for all proxied routes
             app.MapReverseProxy().RequireAuthorization();

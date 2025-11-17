@@ -1,5 +1,6 @@
 
 using FluentValidation;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
@@ -39,6 +40,18 @@ namespace UserService
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen();
 
+                builder.Services.AddResponseCaching();
+
+                builder.Services.AddRateLimiter(options =>
+                {
+                    options.AddFixedWindowLimiter("fixed", limiterOptions =>
+                    {
+                        limiterOptions.PermitLimit = 2; // 2 requests
+                        limiterOptions.Window = TimeSpan.FromSeconds(10);
+                        limiterOptions.QueueLimit = 0;
+                    });
+                });
+
                 var app = builder.Build();
 
                 if (app.Environment.IsDevelopment())
@@ -52,6 +65,9 @@ namespace UserService
 
                 // Global Exception Handling Middleware
                 app.UseMiddleware<GlobalExceptionMiddleware>();
+
+                app.UseRateLimiter();
+                app.UseResponseCaching();
 
                 app.MapControllers();
                 app.Run();
