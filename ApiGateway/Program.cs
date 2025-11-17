@@ -1,5 +1,7 @@
 
+using ApiGateway.Infrastructures.Extensions;
 using ApiGateway.Models;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
@@ -20,6 +22,16 @@ namespace ApiGateway
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            
+
+            Env.Load(); // Loads .env file
+            var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+            var jwtExpiryHours = int.Parse(Environment.GetEnvironmentVariable("JWT_EXPIRY_HOURS"));
+            var loginUsername = Environment.GetEnvironmentVariable("LOGIN_USERNAME");
+            var loginPassword = Environment.GetEnvironmentVariable("LOGIN_PASSWORD");
+
+            builder.Services.AddCustomHealthChecks();
 
             // Add YARP Reverse Proxy
             builder.Services.AddReverseProxy().LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
@@ -43,7 +55,7 @@ namespace ApiGateway
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("A_Very_Long_And_Secure_Key_Example_12345")),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret)),
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
@@ -147,32 +159,39 @@ namespace ApiGateway
             });
 
 
-           
-            
+
+
 
             app.MapPost("/login", (UserLogin login) =>
+            {
+                if (login.Username == loginUsername && login.Password == loginPassword)
                 {
-                    if (login.Username == "admin" && login.Password == "password")
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var key = Encoding.ASCII.GetBytes(jwtSecret);
+                    var startTime = DateTime.UtcNow;
+                    var expiryTime = startTime.AddHours(jwtExpiryHours);
+
+                    var tokenDescriptor = new SecurityTokenDescriptor
                     {
-                        var tokenHandler = new JwtSecurityTokenHandler();
-                        var key = Encoding.ASCII.GetBytes("A_Very_Long_And_Secure_Key_Example_12345");
-                        var tokenDescriptor = new SecurityTokenDescriptor
+                        Subject = new ClaimsIdentity(new[]
                         {
-                            Subject = new ClaimsIdentity(new[]
-                            {
-                                new Claim(ClaimTypes.Name, login.Username),
-                                new Claim(ClaimTypes.Role, "Admin")
-                            }),
-                            Expires = DateTime.UtcNow.AddHours(1),
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                        };
-                        var token = tokenHandler.CreateToken(tokenDescriptor);
-                        return Results.Ok(new { token = tokenHandler.WriteToken(token) });
-                    }
-                    return Results.Unauthorized();
-                })
-                .WithName("Login")
-                .WithOpenApi();
+                            new Claim(ClaimTypes.Name, login.Username),
+                            new Claim(ClaimTypes.Role, "Admin")
+                        }),
+                        Expires = expiryTime,
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                    };
+
+                    var token = tokenHandler.CreateToken(tokenDescriptor);
+                    return Results.Ok(new
+                    {
+                        token = tokenHandler.WriteToken(token),
+                        start = startTime,
+                        expires = expiryTime
+                    });
+                }
+                return Results.Unauthorized();
+            });
 
             app.UseRateLimiter();
             app.UseResponseCaching();
@@ -183,6 +202,14 @@ namespace ApiGateway
             app.MapGet("/secure", [Authorize] () => "This is a secure endpoint")
                .WithName("SecureEndpoint")
                .WithOpenApi();
+
+
+            // Health Check Endpoints
+            app.MapHealthChecks("/health");       // Basic health
+            app.MapHealthChecks("/health/live");  // Liveness
+            app.MapHealthChecks("/health/ready"); // Readiness
+            app.MapHealthChecksUI();              // Dashboard at /healthchecks-ui
+
 
             // Require JWT for all proxied routes
             app.MapReverseProxy().RequireAuthorization();

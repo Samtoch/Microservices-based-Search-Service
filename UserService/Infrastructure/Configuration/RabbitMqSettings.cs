@@ -1,4 +1,4 @@
-﻿namespace UserService.Config
+﻿namespace UserService.Infrastructure.Configuration
 {
     public class RabbitMqSettings
     {

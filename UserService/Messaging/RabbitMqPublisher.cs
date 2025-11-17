@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
-using UserService.Config;
+using UserService.Infrastructure.Configuration;
 
 namespace UserService.Messaging
 {

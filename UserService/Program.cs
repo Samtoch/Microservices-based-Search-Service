@@ -6,7 +6,9 @@ using NLog;
 using NLog.Web;
 using UserService.Data;
 using UserService.DTOs;
+using UserService.Infrastructure.Configuration;
 using UserService.Mappings;
+using UserService.Messaging;
 using UserService.Middlewares;
 using UserService.Repositories;
 using UserService.Services;
@@ -24,13 +26,22 @@ namespace UserService
                 logger.Info("Starting application...");
                 var builder = WebApplication.CreateBuilder(args);
 
-                builder.Logging.ClearProviders();
-                builder.Host.UseNLog();
 
-                builder.Services.AddDbContext<UserDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("UserServiceConnection")));
-                
+                // Load environment variables
+                EnvConfiguration.LoadEnv(builder.Configuration);
+                builder.Services.AddDatabaseContexts();
+                //builder.Services.AddDbContext<UserDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("UserServiceConnection")));
+
+                builder.Logging.ClearProviders();
+                builder.Host.UseNLog();                
+
                 builder.Services.AddTransient<IUserService, UserService.Services.UserService>();
                 builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+                builder.Services.AddTransient<IEventPublisher, RabbitMqPublisher>();
+
+                var rabbitMqSettings = builder.Configuration.GetSection("RabbitMqSettings").Get<RabbitMqSettings>();
+                builder.Services.AddSingleton(rabbitMqSettings);
 
                 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
                 builder.Services.AddScoped<IValidator<UserDto>, UserDtoValidator>();
