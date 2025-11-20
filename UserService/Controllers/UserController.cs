@@ -91,7 +91,7 @@ namespace UserService.Controllers
 
 
         [HttpPost("signup")]
-        public async Task<IActionResult> Signup(UserDto userDto)
+        public async Task<IActionResult> Signup([FromBody] UserDto userDto)
         {
             var user = await _userService.CreateUserAsync(userDto);
             _eventPublisher.Publish(new UserSignupEvent

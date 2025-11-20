@@ -20,7 +20,7 @@ namespace EmailService
             builder.Services.AddSingleton(rabbitMqSettings);
 
             builder.Services.AddSingleton<SmtpEmailSender>();
-            builder.Services.AddScoped<IEmailService, EmailService.Services.EmailService>();
+            builder.Services.AddSingleton<IEmailService, EmailService.Services.EmailService>();
 
             // Register RabbitMQ consumer as background service
             builder.Services.AddHostedService<EmailEventConsumer>();

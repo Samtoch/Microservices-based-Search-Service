@@ -23,8 +23,6 @@ namespace ApiGateway
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            
-
             Env.Load(); // Loads .env file
             var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
             var jwtExpiryHours = int.Parse(Environment.GetEnvironmentVariable("JWT_EXPIRY_HOURS"));
