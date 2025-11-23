@@ -1,6 +1,9 @@
 # Microservices-based-Search-Service
 This is a .Net 9 Microservices Project with implemetations for User Management, Email Service and Semantic Search Service. With YARP as the API Gateway
 
+## API Gateway 
+The API Gateway provides an entry point into the services, provides security (authentication and authorization), and manages rate limiting and caching.
+
 ## User Management
 The User service has a collection of endpoints for user creation, update, deletion, query, signup, login, and password reset.
 The user service communicates with the email service using the RabbitMQ message broker such that signup and password reset notifications are sent through the messaging queue, and a failure of the email service does not stop the user service, and whenever the email service is up, all the messages on the queue get delivered. 
@@ -13,19 +16,28 @@ The Semantic Search service provides endpoints for document uploading, guided co
 
 ### Highlight
 Each of the services is independent and can be containerized in Docker and hosted on the Azure cloud or IIS.
-
-To ensure security, the JWT was implemented to protect all the APIs, and all the sensitive properties are stored in an environmental variable instead of the traditional appSetting. json
-
+To ensure security, the JWT was implemented to protect all the APIs, and all the sensitive properties are stored in an environmental variable instead of the traditional appSetting.json
 To ensure performance, the Get APIs have rate limiting, cache, and pagination.
 
-API Gateway 
-http://localhost:5083/swagger/index.html
+# Prerequisites for running the project locally
+## User Management Service
+- .NET 9 SDK
+- SQL Server
+- RabbitMQ Server running locally on docker running on default port 5672
+- Visual Studio 2022 or later / VS Code
+- Postman or any API testing tool
+- Docker (optional, for containerization)
+- Swagger (for API documentation)
+- Entity Framework Core (for database interactions)
+- ASP.NET Core Identity (for user authentication and authorization)
+- AutoMapper (for object mapping)
+- FluentValidation (for input validation)
+- NLog (for logging)
+- Moq (for unit testing)
+- NUnit (for unit testing framework)
+- Swashbuckle (for Swagger integration)
 
-{
-  "username": "admin",
-  "password": "password"
-}
-
+### SQL Script to create AppUsers table and insert sample data
 CREATE TABLE [dbo].[AppUsers] (
     [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
     [UserName] NVARCHAR(100) NOT NULL,
@@ -58,3 +70,48 @@ VALUES
  'Alex', 'Brown', NULL, GETDATE(), 1, '1988-03-10', 0);
 
 SELECT * FROM APPUSERS;
+
+## Email Service
+- .NET 9 SDK
+- SMTP Server (e.g., Gmail SMTP, SendGrid)
+- Visual Studio 2022 or later / VS Code
+- Postman or any API testing tool
+- RabbitMQ Server running locally on docker running on default port 5672
+- NUnit (for unit testing framework)
+- Swashbuckle (for Swagger integration)
+- NLog (for logging)
+
+## Search Service
+- .NET 9 SDK
+- Visual Studio 2022 or later / VS Code
+- Postman or any API testing tool
+- Docker (optional, for containerization)
+- NUnit (for unit testing framework)
+- Swashbuckle (for Swagger integration)
+- NLog (for logging)
+- Azure Cognitive Services (for semantic search capabilities)
+- OpenAI API (for LLM integration)
+- QdrantDB (for vector database storage)
+
+## API Gateway
+- .NET 9 SDK
+- Visual Studio 2022 or later / VS Code
+- Postman or any API testing tool
+- YARP (for API Gateway)
+- Swashbuckle (for Swagger integration)
+- NLog (for logging)
+- JWT (for secure token-based authentication)
+- Health Checks (for monitoring application health)
+- Rate Limiting Middleware (for controlling API request rates)
+- Caching Middleware (for improving API response times)
+- Swagger UI (for API documentation)
+- OpenAPI (for API specification)
+
+### API Gateway Login Credentials 
+http://localhost:5083/swagger/index.html
+{
+  "username": "admin",
+  "password": "password"
+}
+
+
