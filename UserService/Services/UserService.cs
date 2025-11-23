@@ -44,6 +44,31 @@ namespace UserService.Services
         }
 
 
+        public async Task<ApiResponse<PagedResult<User>>> GetUsersPagedAsync(int pageNumber, int pageSize)
+        {
+            _logger.LogInformation($"Fetching paginated users: Page {pageNumber}, Size {pageSize}");
+
+            var totalCount = await _repository.CountAsync();
+            var users = await _repository.GetPagedAsync(pageNumber, pageSize);
+
+            var pagedResult = new PagedResult<User>
+            {
+                Items = users,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            return new ApiResponse<PagedResult<User>>
+            {
+                ResMsg = "Users fetched successfully",
+                ResCode = 200,
+                ResFlag = true,
+                Data = pagedResult
+            };
+        }
+
+
         public async Task<ApiResponse<IEnumerable<User?>>> GetAllUsersAsync()
         {
             _logger.LogInformation("Fetching all user records from the database.");

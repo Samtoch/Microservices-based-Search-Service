@@ -25,9 +25,9 @@ namespace UserService.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers(int pageNumber = 1, int pageSize = 10)
         {
-            var response = await _userService.GetAllUsersAsync();
+            var response = await _userService.GetUsersPagedAsync(pageNumber, pageSize);
             return StatusCode(response.ResCode, response);
         }
 
@@ -37,11 +37,18 @@ namespace UserService.Controllers
         public async Task<IActionResult> GetUser(Guid id)
         {
             if (id == Guid.Empty)
-                return BadRequest("Invalid user ID.");
-            
+                return BadRequest(new ApiResponse<string>
+                {
+                    ResMsg = "Invalid user ID.",
+                    ResCode = 400,
+                    ResFlag = false,
+                    Data = null
+                });
+
             var response = await _userService.GetUserByIdAsync(id);
             return StatusCode(response.ResCode, response);
         }
+
 
         [HttpPost]
 

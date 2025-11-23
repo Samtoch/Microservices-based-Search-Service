@@ -33,13 +33,13 @@ namespace SemanticSearchService.Controllers
             return Ok(response);
         }
 
-        [Route("chat/deepseek")]
-        [HttpGet]
-        public async Task<ActionResult> ChatDeepseek(string prompt)
-        {
-            var response = await _searchService.GetDeepSeekAnswer(prompt);
-            return Ok(response);
-        }
+        //[Route("chat/deepseek")]
+        //[HttpGet]
+        //public async Task<ActionResult> ChatDeepseek(string prompt)
+        //{
+        //    var response = await _searchService.GetDeepSeekAnswer(prompt);
+        //    return Ok(response);
+        //}
 
         
 
@@ -60,7 +60,7 @@ namespace SemanticSearchService.Controllers
             }
         }
 
-        [HttpPost("rag/answer")]
+        [HttpPost("Rag/Answer")]
         public async Task<IActionResult> GenerateAnswer([FromBody] SearchRequest request)
         {
             //string model = "all-minilm";

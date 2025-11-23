@@ -15,6 +15,21 @@ namespace UserService.Repositories
             _logger = logger;
         }
 
+        public async Task<int> CountAsync()
+        {
+            return await _context.AppUsers.CountAsync(u => !u.IsDeleted);
+        }
+
+        public async Task<IEnumerable<User>> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            return await _context.AppUsers
+                 .Where(u => !u.IsDeleted)
+                 .OrderBy(u => u.CreatedDate)
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToListAsync();
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             _logger.LogInformation("Fetching all users from database.");
