@@ -1,10 +1,11 @@
+# Microservices-based-Search-Service
+
 <div align="center" id="Microservices Architecture">
 	<a href="https://github.com/Samtoch/Microservices-based-Search-Service" title="Microservices Search Service/">
 	  <img src="/Microservices Decorated nobg.drawio.png" alt="Microservices Architecture Banner" width="90%">
 	</a>
 </div>
 
-# Microservices-based-Search-Service
 This is a .Net 9 Microservices Project with implemetations for User Management, Email Service and Semantic Search Service. With YARP as the API Gateway
 
 ## API Gateway 
@@ -120,4 +121,10 @@ http://localhost:5083/swagger/index.html
   "password": "password"
 }
 
+# Swagger UI for all the Services
 
+<div align="center" id="Microservices Swagger Documentation">
+	<a href="https://github.com/Samtoch/Microservices-based-Search-Service" title="Microservices Search Service/">
+	  <img src="/Microservices Swagger UI.png" alt="Microservices UI" width="90%">
+	</a>
+</div>
