@@ -1,3 +1,9 @@
+<div align="center" id="Microservices Architecture">
+	<a href="https://github.com/Samtoch/Microservices-based-Search-Service" title="Microservices Search Service/">
+	  <img src="/Microservices Decorated nobg.drawio.png" alt="Microservices Architecture Banner" width="90%">
+	</a>
+</div>
+
 # Microservices-based-Search-Service
 This is a .Net 9 Microservices Project with implemetations for User Management, Email Service and Semantic Search Service. With YARP as the API Gateway
 
