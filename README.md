@@ -1,6 +1,23 @@
 # Microservices-based-Search-Service
 This is a .Net 9 Microservices Project with implemetations for User Management, Email Service and Semantic Search Service. With YARP as the API Gateway
 
+## User Management
+The User service has a collection of endpoints for user creation, update, deletion, query, signup, login, and password reset.
+The user service communicates with the email service using the RabbitMQ message broker such that signup and password reset notifications are sent through the messaging queue, and a failure of the email service does not stop the user service, and whenever the email service is up, all the messages on the queue get delivered. 
+
+## Email Service
+The email service provides endpoints for sending mail to users on signup and password reset.
+
+## Search Service
+The Semantic Search service provides endpoints for document uploading, guided context searching, and direct search of LLM
+
+### Highlight
+Each of the services is independent and can be containerized in Docker and hosted on the Azure cloud or IIS.
+
+To ensure security, the JWT was implemented to protect all the APIs, and all the sensitive properties are stored in an environmental variable instead of the traditional appSetting. json
+
+To ensure performance, the Get APIs have rate limiting, cache, and pagination.
+
 API Gateway 
 http://localhost:5083/swagger/index.html
 
