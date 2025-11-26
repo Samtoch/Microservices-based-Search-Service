@@ -11,14 +11,14 @@ namespace EmailService.Services
             _smtpSender = smtpSender;
         }
 
-        public void SendSignupEmail(string email, string username)
+        public async Task SendSignupEmail(string email, string username)
         {
             var subject = "Welcome to Our Platform!";
             var body = $"Hello {username}, thank you for signing up!";
             _smtpSender.SendEmail(email, subject, body);
         }
 
-        public void SendPasswordResetEmail(string email, string token)
+        public async Task SendPasswordResetEmail(string email, string token)
         {
             var subject = "Password Reset Request";
             var body = $"Click here to reset your password: https://example.com/reset?token={token}";

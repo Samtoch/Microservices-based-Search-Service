@@ -2,8 +2,8 @@
 {
     public interface IEmailService
     {
-        void SendSignupEmail(string email, string username);
-        void SendPasswordResetEmail(string email, string token);
+        Task SendSignupEmail(string email, string username);
+        Task SendPasswordResetEmail(string email, string token);
 
     }
 }

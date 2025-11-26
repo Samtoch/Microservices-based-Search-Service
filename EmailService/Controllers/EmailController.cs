@@ -16,16 +16,16 @@ namespace EmailService.Controllers
         }
 
         [HttpPost("send-signup-notification")]
-        public IActionResult SendSignupNotification([FromBody] SignupRequest request)
+        public async Task<IActionResult> SendSignupNotification([FromBody] SignupRequest request)
         {
-            _emailService.SendSignupEmail(request.Email, request.Username);
+            await _emailService.SendSignupEmail(request.Email, request.Username);
             return Ok("Signup email sent.");
         }
 
         [HttpPost("send-password-reset-notification")]
-        public IActionResult SendPasswordResetNotification([FromBody] PasswordResetRequest request)
+        public async Task<IActionResult> SendPasswordResetNotification([FromBody] PasswordResetRequest request)
         {
-            _emailService.SendPasswordResetEmail(request.Email, request.Token);
+            await _emailService.SendPasswordResetEmail(request.Email, request.Token);
             return Ok("Password reset email sent.");
         }
     }

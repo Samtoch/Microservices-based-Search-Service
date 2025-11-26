@@ -3,6 +3,7 @@ using EmailService.Config;
 using EmailService.Infrastructure;
 using EmailService.Messaging;
 using EmailService.Services;
+using NLog.Web;
 
 namespace EmailService
 {
@@ -11,6 +12,9 @@ namespace EmailService
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
 
             // Add services to the container.
             var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>();

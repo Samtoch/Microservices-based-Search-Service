@@ -88,6 +88,14 @@ SELECT * FROM APPUSERS;
 - Swashbuckle (for Swagger integration)
 - NLog (for logging)
 
+### Configuring RabbitMQ 
+- Install Docker Desktop
+- Pull RabbitMQ and map the ports using the below command
+- docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+- browse rabbitmq GUI using http://localhost:15672
+- login using username: guest and password: guest
+
+
 ## Search Service
 - .NET 9 SDK
 - Visual Studio 2022 or later / VS Code
