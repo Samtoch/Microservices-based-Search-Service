@@ -80,6 +80,7 @@ namespace EmailService.Messaging
             }
         }
 
+
         private async Task InitializeRabbitMQ()
         {
             try
