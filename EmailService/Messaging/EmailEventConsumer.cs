@@ -26,6 +26,7 @@ namespace EmailService.Messaging
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+
             await InitializeRabbitMQ();
 
             var consumer = new AsyncEventingBasicConsumer(_channel);
